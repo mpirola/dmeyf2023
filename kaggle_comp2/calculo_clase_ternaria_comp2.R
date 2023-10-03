@@ -15,3 +15,5 @@ fwrite(bd,
        file = "buckets/b1/datasets/competencia_02.csv",
        sep = ",")
 
+
+
