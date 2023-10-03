@@ -39,8 +39,8 @@ PARAM$experimento <- "HT5230"
 
 PARAM$input$dataset <- "./datasets/competencia_02_FE1.csv"
 
- # los meses en los que vamos a entrenar
-PARAM$input$training <- c(202101, 202102, 202103, 202104, 202105)
+ # los meses en los que vamos a entrenar, todos los meses menos 2020 y el target - 1
+PARAM$input$training <- c(seq(201901,201912,1),seq(202101,202105,1))
 
 semillas <- c(528881,583613,661417,894407,915251)
 
