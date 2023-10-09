@@ -7,7 +7,7 @@ require("rpart")
 require("rpart.plot")
 
 # Aqui se debe poner la carpeta de la materia de SU computadora local
-setwd("X:\\gdrive\\uba2023\\") # Establezco el Working Directory
+setwd("C:/Users/malen/Dropbox/MAESTRIA_CDD/DM_EyF") # Establezco el Working Directory
 
 # cargo el dataset
 dataset <- fread("./datasets/competencia_01.csv")
@@ -17,6 +17,7 @@ dapply <- dataset[foto_mes == 202105] # defino donde voy a aplicar el modelo
 
 # genero el modelo,  aqui se construye el arbol
 # quiero predecir clase_ternaria a partir de el resto de las variables
+
 modelo <- rpart(
         formula = "clase_ternaria ~ .",
         data = dtrain, # los datos donde voy a entrenar
@@ -55,7 +56,7 @@ dapply[, Predicted := as.numeric(prob_baja2 > 1 / 40)]
 
 # genero el archivo para Kaggle
 # primero creo la carpeta donde va el experimento
-dir.create("./exp/")
+#dir.create("./exp/")
 dir.create("./exp/KA2001")
 
 # solo los campos para Kaggle

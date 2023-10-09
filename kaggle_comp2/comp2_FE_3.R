@@ -104,7 +104,7 @@ lagcols <- paste0("lag_",names(dataset))
 
 dataset[, (lagcols) :=  shift(.SD, 1), by=numero_de_cliente]
 
-dataset[,c("lag_numero_de_cliente","foto_mes") := NULL]
+dataset[,c("lag_numero_de_cliente","lag_foto_mes","lag_clase_ternaria") := NULL]
 
 fwrite(dataset,
        file = "buckets/b1/datasets/competencia_02_FE3.csv",
