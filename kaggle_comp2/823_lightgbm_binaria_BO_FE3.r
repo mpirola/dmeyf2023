@@ -34,7 +34,7 @@ PARAM <- list()
 
 PARAM$experimento <- "HT8230"
 
-PARAM$input$dataset <- "./datasets/competencia_02.csv.gz"
+PARAM$input$dataset <- "./datasets/competencia_02_FE3.csv.gz"
 
 
 semillas <- c(528881,583613,661417,894407,915251)
