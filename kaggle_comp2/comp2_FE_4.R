@@ -2,13 +2,16 @@ require(data.table)
 
 dataset <- fread("C:/Users/malen/Downloads/competencia_02.csv")
 
-#dataset <- fread("buckets/b1/datasets/competencia_02.csv")
+#dataset <- fread("buckets/b1/datasets/competencia_02.csv.gz")
 
 
 require(data.table)
 
 
 ### Colapso algunas variables en una
+
+# Cantidad comisiones
+dataset[, mcomisiones := rowSums(.SD, na.rm = T), .SDcols = c("mcomisiones_mantenimiento","mcomisiones_otras")]
 
 # Cantidad de tarjetas
 dataset[, ctarjetas_total := rowSums(.SD, na.rm = T), .SDcols = c("ctarjeta_master","ctarjeta_visa")]
@@ -59,8 +62,6 @@ dataset[,mtarjetas_total := NULL]
 dataset[, Visa_mpagominimo_ranknorm := round(rank(Visa_mpagominimo)/.N,6), by = as.character(foto_mes)]
 dataset[,Visa_mpagominimo := NULL]
 
-dataset[, ccomisiones_mantenimiento_ranknorm := round(rank(ccomisiones_mantenimiento)/.N,6), by = as.character(foto_mes)]
-dataset[,ccomisiones_mantenimiento := NULL]
 
 dataset[, mcomisiones_mantenimiento_ranknorm := round(rank(mcomisiones_mantenimiento)/.N,6), by = as.character(foto_mes)]
 dataset[,mcomisiones_mantenimiento := NULL]
@@ -109,7 +110,7 @@ setorder(dataset,cols = foto_mes)
 ###### Catastrophe #######
 
 
-dataset[,mcomisiones := fifelse(foto_mes %in% c(201905,201910,202006),NA_real_,mcomisiones)]
+dataset[,mcomisiones_ranknorm := fifelse(foto_mes %in% c(201905,201910,202006),NA_real_,mcomisiones_ranknorm)]
 dataset[,mactivos_margen := fifelse(foto_mes %in% c(201905,201910,202006),NA_real_,mactivos_margen)]
 dataset[,mpasivos_margen := fifelse(foto_mes %in% c(201905,201910,202006),NA_real_,mpasivos_margen)]
 dataset[,mrentabilidad := fifelse(foto_mes %in% c(201905,201910,202006),NA_real_,mrentabilidad)]
@@ -185,9 +186,9 @@ dataset[,(mmovil_names) := frollmean(.SD, 3, na.rm=T), .SDcols = lagcols, by = n
 dataset[,clase_ternaria := fifelse(foto_mes %in% c(202106,202107),NA_character_,clase_ternaria)]
 
 fwrite(dataset,
-       file = "C:/Users/malen/Downloads/competencia_02_FE4.csv",
+       file = "C:/Users/malen/Downloads/competencia_02_FE4.csv.gz",
        sep = ",")
 
-gzip('C:/Users/malen/Downloads/competencia_02_FE4.csv',
-     destname='C:/Users/malen/Downloads/competencia_02_FE4.csv.gz')
+# gzip('C:/Users/malen/Downloads/competencia_02_FE4.csv',
+#      destname='C:/Users/malen/Downloads/competencia_02_FE4.csv.gz')
 
