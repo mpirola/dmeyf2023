@@ -1,8 +1,7 @@
 require(data.table)
 
-dataset <- fread("C:/Users/malen/Downloads/competencia_02.csv")
 
-#dataset <- fread("buckets/b1/datasets/competencia_02.csv.gz")
+dataset <- fread("buckets/b1/datasets/competencia_02.csv.gz")
 
 
 require(data.table)
@@ -186,9 +185,7 @@ dataset[,(mmovil_names) := frollmean(.SD, 3, na.rm=T), .SDcols = lagcols, by = n
 dataset[,clase_ternaria := fifelse(foto_mes %in% c(202106,202107),NA_character_,clase_ternaria)]
 
 fwrite(dataset,
-       file = "C:/Users/malen/Downloads/competencia_02_FE4.csv.gz",
+       file = "buckets/b1/datasets/competencia_02_FE4.csv.gz",
        sep = ",")
 
-# gzip('C:/Users/malen/Downloads/competencia_02_FE4.csv',
-#      destname='C:/Users/malen/Downloads/competencia_02_FE4.csv.gz')
 
