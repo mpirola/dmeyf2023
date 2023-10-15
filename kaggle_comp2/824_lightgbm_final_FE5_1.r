@@ -20,7 +20,9 @@ PARAM$input$dataset <- "./datasets/competencia_02_FE5.csv.gz"
 
 # meses donde se entrena el modelo.
 # roll forward dos meses
-PARAM$input$training <- c(201903, 201904, 201905,202003,202004,202005, 202103, 202104, 202105)
+PARAM$input$training <- c(201907,201908,201909,201910,201911,201912,
+                          202011,202012,
+                          202101, 202102, 202103,202104,202105)
 PARAM$input$future <- c(202107) # meses donde se aplica el modelo
 
 PARAM$finalmodel$semilla <- 583613
