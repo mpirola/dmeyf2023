@@ -14,9 +14,9 @@ require("lightgbm")
 # defino los parametros de la corrida, en una lista, la variable global  PARAM
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM <- list()
-PARAM$experimento <- "KA8240_FE4_3"
+PARAM$experimento <- "KA8240_FE4_3b"
 
-PARAM$input$dataset <- "./datasets/competencia_02.csv.gz"
+PARAM$input$dataset <- "./datasets/competencia_02_FE4.csv.gz"
 
 # meses donde se entrena el modelo.
 # roll forward dos meses
@@ -25,7 +25,7 @@ PARAM$input$future <- c(202107) # meses donde se aplica el modelo
 
 PARAM$finalmodel$semilla <- 583613
 
-# hiperparametros intencionalmente NO optimos
+# hiperparametros intencionalmente 
 PARAM$finalmodel$optim$num_iterations <- 2102
 PARAM$finalmodel$optim$learning_rate <- 0.0213301867604791
 PARAM$finalmodel$optim$feature_fraction <- 0.343562664474759
