@@ -80,6 +80,9 @@ PARAM$finalmodel$lgb_basicos <- list(
   
   extra_trees = TRUE, # Magic Sauce
   
+  #agrego hp de sampling
+  data_sample_strategy = 'goss',
+  
   seed = PARAM$finalmodel$semilla
 )
 
@@ -94,14 +97,13 @@ PARAM$bo_lgb <- makeParamSet(
   makeIntegerParam("num_leaves", lower = 8L, upper = 1024L),
   makeIntegerParam("min_data_in_leaf", lower = 100L, upper = 50000L),
   #nuevos hp
+  
   makeNumericParam("feature_fraction_bynode", lower = 0.01, upper = 1.0),
 
   makeIntegerParam("max_depth", lower = 2L, upper = 50L),
 
-  makeNumericParam("bagging_fraction", lower = 0.0, upper = 1.0),
-  makeNumericParam("pos_bagging_fraction", lower = 0.0, upper = 1.0),
-  makeNumericParam("neg_bagging_fraction", lower = 0.0, upper = 1.0),
-  makeIntegerParam("baggin_freq", lower = 1L, upper = 30L)
+  makeNumericParam("top_rate", lower = 0.0, upper = 1.0),
+  makeNumericParam("other_rate", lower = 0.0, upper = 1.0)
 )
 
 
