@@ -186,12 +186,12 @@ for (i in 1:20) {
                              fifelse(Predicted == 1L & clase_ternaria != "BAJA+2",-7000,0))]
   
   ganancia <- tibble::tribble(~semilla,~ganancia,
-                              sem, sum(tb_entrega$gan))
+                              semillas[i], sum(tb_entrega$gan))
   
   ganancias <- rbind(ganancias,ganancia)
   
   fwrite(tb_entrega[, list(numero_de_cliente, Predicted)],
-         file = paste0(PARAM$experimento, "_", sem, ".csv"),
+         file = paste0(PARAM$experimento, "_", semillas[i], ".csv"),
          sep = ","
     )
   
