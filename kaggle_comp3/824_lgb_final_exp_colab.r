@@ -11,6 +11,7 @@ require("data.table")
 require("lightgbm")
 
 
+
 # defino los parametros de la corrida, en una lista, la variable global  PARAM
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM <- list()
@@ -29,9 +30,60 @@ semillas <- c(528881, 583613, 661417, 894407, 915251,
               638269, 638303, 638359, 721181, 837451, 
               878173, 910771, 910781, 942659, 942661)
 
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+setwd("~/buckets/b1")
+
+# cargo el dataset donde voy a entrenar
+dataset <- fread(PARAM$input$dataset, stringsAsFactors = TRUE)
+
 truth <- dataset[foto_mes == PARAM$input$future,c("numero_de_cliente","clase_ternaria")]
 
 ganancias <- tibble::tribble(~semilla,~ganancia)
+
+
+
+#--------------------------------------
+
+# paso la clase a binaria que tome valores {0,1}  enteros
+# set trabaja con la clase  POS = { BAJA+1, BAJA+2 }
+# esta estrategia es MUY importante
+dataset[, clase01 := ifelse(clase_ternaria %in% c("BAJA+2", "BAJA+1"), 1L, 0L)]
+
+#--------------------------------------
+
+# los campos que se van a utilizar
+campos_buenos <- setdiff(colnames(dataset), c("clase_ternaria", "clase01"))
+
+#--------------------------------------
+
+
+# establezco donde entreno
+dataset[, train := 0L]
+dataset[foto_mes %in% PARAM$input$training, train := 1L]
+
+#--------------------------------------
+# creo las carpetas donde van los resultados
+# creo la carpeta donde va el experimento
+dir.create("./exp/", showWarnings = FALSE)
+dir.create(paste0("./exp/", PARAM$experimento, "/"), showWarnings = FALSE)
+
+# Establezco el Working Directory DEL EXPERIMENTO
+setwd(paste0("./exp/", PARAM$experimento, "/"))
+
+
+
+# dejo los datos en el formato que necesita LightGBM
+dtrain <- lgb.Dataset(
+  data = data.matrix(dataset[train == 1L, campos_buenos, with = FALSE]),
+  label = dataset[train == 1L, clase01]
+)
+
+
+# genero el modelo
+
 
 for (sem in semillas) {
   
@@ -79,71 +131,10 @@ for (sem in semillas) {
     seed = PARAM$finalmodel$semilla
   )
   
-  
-  #------------------------------------------------------------------------------
-  #------------------------------------------------------------------------------
-  # Aqui empieza el programa
-  setwd("~/buckets/b1")
-  
-  # cargo el dataset donde voy a entrenar
-  dataset <- fread(PARAM$input$dataset, stringsAsFactors = TRUE)
-  
-  
-  # Catastrophe Analysis  -------------------------------------------------------
-  # deben ir cosas de este estilo
-  #   dataset[foto_mes == 202006, active_quarter := NA]
-  
-  # Data Drifting
-  # por ahora, no hago nada
-  
-  
-  # Feature Engineering Historico  ----------------------------------------------
-  #   aqui deben calcularse los  lags y  lag_delta
-  #   Sin lags no hay paraiso ! corta la bocha
-  #   https://rdrr.io/cran/data.table/man/shift.html
-  
-  
-  #--------------------------------------
-  
-  # paso la clase a binaria que tome valores {0,1}  enteros
-  # set trabaja con la clase  POS = { BAJA+1, BAJA+2 }
-  # esta estrategia es MUY importante
-  dataset[, clase01 := ifelse(clase_ternaria %in% c("BAJA+2", "BAJA+1"), 1L, 0L)]
-  
-  #--------------------------------------
-  
-  # los campos que se van a utilizar
-  campos_buenos <- setdiff(colnames(dataset), c("clase_ternaria", "clase01"))
-  
-  #--------------------------------------
-  
-  
-  # establezco donde entreno
-  dataset[, train := 0L]
-  dataset[foto_mes %in% PARAM$input$training, train := 1L]
-  
-  #--------------------------------------
-  # creo las carpetas donde van los resultados
-  # creo la carpeta donde va el experimento
-  dir.create("./exp/", showWarnings = FALSE)
-  dir.create(paste0("./exp/", PARAM$experimento, "/"), showWarnings = FALSE)
-  
-  # Establezco el Working Directory DEL EXPERIMENTO
-  setwd(paste0("./exp/", PARAM$experimento, "/"))
-  
-  
-  
-  # dejo los datos en el formato que necesita LightGBM
-  dtrain <- lgb.Dataset(
-    data = data.matrix(dataset[train == 1L, campos_buenos, with = FALSE]),
-    label = dataset[train == 1L, clase01]
-  )
-  
-  
-  # genero el modelo
   param_completo <- c(PARAM$finalmodel$lgb_basicos,
                       PARAM$finalmodel$optim)
   
+
   modelo <- lgb.train(
     data = dtrain,
     param = param_completo,
