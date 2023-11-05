@@ -41,7 +41,7 @@ dataset <- fread(PARAM$input$dataset, stringsAsFactors = TRUE)
 
 truth <- dataset[foto_mes == PARAM$input$future,c("numero_de_cliente","clase_ternaria")]
 
-ganancias <- tibble::tribble(~semilla,~ganancia)
+
 
 
 
@@ -84,10 +84,11 @@ dtrain <- lgb.Dataset(
 
 # genero el modelo
 
+ganancias <- tibble::tribble(~semilla,~ganancia)
 
-for (sem in semillas) {
+for (i in 1:20) {
   
-  PARAM$finalmodel$semilla <- sem
+  PARAM$finalmodel$semilla <- semillas[i]
   
   # hiperparametros intencionalmente 
   PARAM$finalmodel$optim$num_iterations <- 228
@@ -96,7 +97,7 @@ for (sem in semillas) {
   PARAM$finalmodel$optim$min_data_in_leaf <- 16964
   PARAM$finalmodel$optim$num_leaves <- 50
   
-  
+  envios <- 13235
   
   
   # Hiperparametros FIJOS de  lightgbm
@@ -181,7 +182,8 @@ for (sem in semillas) {
   tb_entrega[, Predicted := 0L]
   tb_entrega[1:envios, Predicted := 1L]
   tb_entrega <- merge(tb_entrega,truth,sort = F)
-  tb_entrega[,gan := fifelse(Predicted == 1L & clase_ternaria == "BAJA+2",273000,-7000)]
+  tb_entrega[,gan := fifelse(Predicted == 1L & clase_ternaria == "BAJA+2",273000,
+                             fifelse(Predicted == 1L & clase_ternaria != "BAJA+2",-7000,0))]
   
   ganancia <- tibble::tribble(~semilla,~ganancia,
                               sem, sum(tb_entrega$gan))
@@ -192,6 +194,8 @@ for (sem in semillas) {
          file = paste0(PARAM$experimento, "_", sem, ".csv"),
          sep = ","
     )
+  
+  print(paste0("Iteracion ",i, " finalizada"))
   
 }
 
