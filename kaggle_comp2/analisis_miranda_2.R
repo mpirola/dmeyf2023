@@ -31,6 +31,8 @@ porc_bajas_mes <- bajas_por_mes %>%
   mutate(porc = round(100*n_bajas/lag(n_clientes),1)) %>% 
   mutate(mes_baja = factor(mes_baja,ordered = T)) %>% 
   rename(foto_mes = mes_baja)
+
+total_bajas <- sum(bajas_por_mes$n_bajas)
   
 
 gg_bajas_mes <- porc_bajas_mes %>% 
@@ -567,5 +569,67 @@ gg_cluster_4_prestamos <- cluster_4 %>%
         legend.justification = c("right","top"))
 
 gg_cluster_4_prestamos
+
+
+# Cluster 5
+
+
+cluster_5 <- ultimos_meses_clientes %>%
+  filter(clusters == 5) %>% 
+  select(rank_mes,
+         mprestamos_personales,
+         mtarjeta_visa_consumo,
+         mcuenta_saldos_ranknorm,
+         mprestamos_prendarios) %>%
+  pivot_longer(cols = -rank_mes) %>% 
+  group_by(rank_mes,name) %>% 
+  summarize(total = round(sum(value))) %>% 
+  mutate(rank_mes = factor(rank_mes)) %>% 
+  pivot_wider(id_cols = rank_mes,
+              values_from = total)
+
+gg_cluster_5_prendarios <- cluster_5 %>%  
+  ggplot(aes(x=rank_mes, y= mprestamos_prendarios)) +
+  geom_bar(stat = "identity", color = "#00C9A7",fill = "#00C9A7") +
+  labs(title = "Deuda prestamos prendarios") +
+  ylab("$") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.title = element_text(size = 20, ),
+        plot.subtitle = element_text(size = 8),
+        plot.caption = element_text(size = 8),
+        axis.title.x = element_blank(),
+        axis.line.y = element_line(colour = "light gray",
+                                   size = 0.5),
+        axis.line.x = element_line(colour = "light gray",
+                                   size = 0.5),
+        axis.text.x = element_text(angle = 90,vjust = 0.5, hjust=1,size = 8),
+        legend.title=element_blank(),
+        legend.justification = c("right","top"))
+
+gg_cluster_5_prendarios
+
+gg_cluster_5_saldos <- cluster_5 %>%  
+  ggplot(aes(x=rank_mes, y=mcuenta_saldos_ranknorm)) +
+  geom_bar(stat = "identity", color = "#00C9A7",fill = "#00C9A7") +
+  labs(title = "Saldo cuentas (normalizado)") +
+  ylab("Rank sum") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.title = element_text(size = 20, ),
+        plot.subtitle = element_text(size = 8),
+        plot.caption = element_text(size = 8),
+        axis.title.x = element_blank(),
+        axis.line.y = element_line(colour = "light gray",
+                                   size = 0.5),
+        axis.line.x = element_line(colour = "light gray",
+                                   size = 0.5),
+        axis.text.x = element_text(angle = 90,vjust = 0.5, hjust=1,size = 8),
+        legend.title=element_blank(),
+        legend.justification = c("right","top"))
+
+gg_cluster_5_saldos
 
 

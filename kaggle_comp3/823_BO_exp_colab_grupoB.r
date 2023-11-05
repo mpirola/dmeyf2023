@@ -32,7 +32,7 @@ options(error = function() {
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM <- list()
 
-PARAM$experimento <- "HT8230_exp_colab_grupoB_bagging"
+PARAM$experimento <- "HT8230_exp_colab_grupoB"
 
 PARAM$input$dataset <- "./datasets/dataset_baseline_exp_colab.csv.gz"
 
@@ -74,16 +74,16 @@ PARAM$lgb_basicos <- list(
   drop_rate = 0.1, # 0.0 < neg_bagging_fraction <= 1.0
   max_drop = 50, # <=0 means no limit
   skip_drop = 0.5, # 0.0 <= skip_drop <= 1.0
-
   extra_trees = TRUE, # Magic Sauce
-
   seed = PARAM$lgb_semilla
 )
 
 
 # Aqui se cargan los hiperparametros que se optimizan
 #  en la Bayesian Optimization
-PARAM$bo_lgb <- makeParamSet(
+
+sampling_strategy_set <- makeParamSet(
+  makeDiscreteParam("data_sample_strategy", values = c("goss", "bagging")),
   makeNumericParam("learning_rate", lower = 0.02, upper = 0.3),
   makeNumericParam("feature_fraction", lower = 0.01, upper = 1.0),
   makeIntegerParam("num_leaves", lower = 8L, upper = 1024L),
@@ -91,9 +91,12 @@ PARAM$bo_lgb <- makeParamSet(
   makeNumericParam("feature_fraction_bynode", lower = 0.01, upper = 1.0),
   makeIntegerParam("max_bin", lower = 20L, upper = 2000L),
   makeIntegerParam("max_depth", lower = 2L, upper = 50L),
+  makeNumericParam("top_rate", lower = 0.01, upper = 0.5),
+  makeNumericParam("other_rate", lower = 0.01, upper = 0.5),
   makeNumericParam("bagging_fraction", lower = 0.01, upper = 0.9),
   makeIntegerParam("baggin_freq", lower = 1L, upper = 10L)
 )
+
 
 # si usted es ambicioso, y tiene paciencia, podria subir este valor a 100
 PARAM$bo_iteraciones <- 50 # iteraciones de la Optimizacion Bayesiana
