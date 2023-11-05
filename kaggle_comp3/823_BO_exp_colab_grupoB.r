@@ -67,7 +67,6 @@ PARAM$lgb_basicos <- list(
   min_sum_hessian_in_leaf = 0.001, #  min_sum_hessian_in_leaf >= 0.0
   lambda_l1 = 0.0, # lambda_l1 >= 0.0
   lambda_l2 = 0.0, # lambda_l2 >= 0.0
-  sampling_strategy = 'bagging',
   num_iterations = 9999, # un numero muy grande, lo limita early_stopping_rounds
   is_unbalance = FALSE, #
   scale_pos_weight = 1.0, # scale_pos_weight > 0.0
