@@ -82,7 +82,7 @@ PARAM$lgb_basicos <- list(
 # Aqui se cargan los hiperparametros que se optimizan
 #  en la Bayesian Optimization
 
-sampling_strategy_set <- makeParamSet(
+PARAM$bo_lgb <- makeParamSet(
   makeDiscreteParam("data_sample_strategy", values = c("goss", "bagging")),
   makeNumericParam("learning_rate", lower = 0.02, upper = 0.3),
   makeNumericParam("feature_fraction", lower = 0.01, upper = 1.0),
