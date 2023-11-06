@@ -159,7 +159,7 @@ for (i in 1:20) {
   #--------------------------------------
   # ahora imprimo la importancia de variables
   tb_importancia <- as.data.table(lgb.importance(modelo))
-  archivo_importancia <- "impo.txt"
+  archivo_importancia <- paste0("impo_",i,".txt")
   
   fwrite(tb_importancia,
          file = archivo_importancia,
@@ -184,7 +184,7 @@ for (i in 1:20) {
   
   # grabo las probabilidad del modelo
   fwrite(tb_entrega,
-         file = "prediccion.txt",
+         file = paste0("prediccion_",i,".txt"),
          sep = "\t"
   )
   
@@ -207,7 +207,7 @@ for (i in 1:20) {
   ganancias <- rbind(ganancias,ganancia)
   
   fwrite(tb_entrega[, list(numero_de_cliente, Predicted)],
-         file = paste0(PARAM$experimento, "_", semillas[i], ".csv"),
+         file = paste0(PARAM$experimento, "_", i, ".csv"),
          sep = ","
     )
   
