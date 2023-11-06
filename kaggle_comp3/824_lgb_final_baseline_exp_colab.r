@@ -85,9 +85,9 @@ dtrain <- lgb.Dataset(
 # genero el modelo
 
 
-for (sem in semillas) {
+for (i in 1:20) {
   
-  PARAM$finalmodel$semilla <- sem
+  PARAM$finalmodel$semilla <- semillas[i]
   
   # hiperparametros intencionalmente 
   PARAM$finalmodel$optim$num_iterations <- 282
@@ -96,7 +96,7 @@ for (sem in semillas) {
   PARAM$finalmodel$optim$min_data_in_leaf <- 1593
   PARAM$finalmodel$optim$num_leaves <- 273
   
-  
+  envios <- 13117
   
   
   # Hiperparametros FIJOS de  lightgbm
@@ -180,16 +180,17 @@ for (sem in semillas) {
 
   tb_entrega[, Predicted := 0L]
   tb_entrega[1:envios, Predicted := 1L]
-  tb_entrega <- merge(tb_entrega,truth,sort = F)
-  tb_entrega[,gan := fifelse(Predicted == 1L & clase_ternaria == "BAJA+2",273000,-7000)]
+  
+  tb_ganancias <- tb_entrega[truth, on = c("numero_de_cliente"), nomatch = 0]
+  tb_ganancias[,gan := fifelse(clase_ternaria == "BAJA+2",273000,-7000,0)]
   
   ganancia <- tibble::tribble(~semilla,~ganancia,
-                              sem, sum(tb_entrega$gan))
+                              semillas[i], sum(tb_ganancias$gan))
   
   ganancias <- rbind(ganancias,ganancia)
   
   fwrite(tb_entrega[, list(numero_de_cliente, Predicted)],
-         file = paste0(PARAM$experimento, "_", sem, ".csv"),
+         file = paste0(PARAM$experimento, "_", semillas[i], ".csv"),
          sep = ","
     )
   
