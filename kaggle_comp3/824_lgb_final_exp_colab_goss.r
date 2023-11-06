@@ -91,7 +91,7 @@ for (i in 1:20) {
   PARAM$finalmodel$semilla <- semillas[i]
   
   # hiperparametros intencionalmente 
-  PARAM$finalmodel$optim$num_iterations <- 
+  PARAM$finalmodel$optim$num_iterations <- 100
   
   PARAM$finalmodel$optim$learning_rate <- 0.149905294096167
   
