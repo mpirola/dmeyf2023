@@ -15,7 +15,7 @@ require("lightgbm")
 # defino los parametros de la corrida, en una lista, la variable global  PARAM
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM <- list()
-PARAM$experimento <- "KA8240_baseline_exp_colab"
+PARAM$experimento <- "KA8240_exp_colab_bagging"
 
 PARAM$input$dataset <- "./datasets/dataset_baseline_exp_colab.csv.gz"
 
@@ -41,7 +41,7 @@ dataset <- fread(PARAM$input$dataset, stringsAsFactors = TRUE)
 
 truth <- dataset[foto_mes == PARAM$input$future,c("numero_de_cliente","clase_ternaria")]
 
-ganancias <- tibble::tribble(~semilla,~ganancia)
+
 
 
 
@@ -84,19 +84,34 @@ dtrain <- lgb.Dataset(
 
 # genero el modelo
 
+ganancias <- tibble::tribble(~semilla,~ganancia)
 
-for (sem in semillas) {
+for (i in 1:20) {
   
-  PARAM$finalmodel$semilla <- sem
+  PARAM$finalmodel$semilla <- semillas[i]
   
   # hiperparametros intencionalmente 
-  PARAM$finalmodel$optim$num_iterations <- 282
-  PARAM$finalmodel$optim$learning_rate <- 0.08357087234559
-  PARAM$finalmodel$optim$feature_fraction <- 0.0517534053968848
-  PARAM$finalmodel$optim$min_data_in_leaf <- 1593
-  PARAM$finalmodel$optim$num_leaves <- 273
+  PARAM$finalmodel$optim$num_iterations <- 100
   
+  PARAM$finalmodel$optim$learning_rate <- 0.281098885768042
   
+  PARAM$finalmodel$optim$feature_fraction <- 0.496338772217946
+  
+  PARAM$finalmodel$optim$feature_fraction_bynode <- 0.496338772217946
+  
+  PARAM$finalmodel$optim$min_data_in_leaf <- 27272
+  
+  PARAM$finalmodel$optim$num_leaves <- 690
+  
+  PARAM$finalmodel$optim$max_depth <- 45
+    
+  PARAM$finalmodel$optim$bagging_fraction <- 0.387145419443833
+  
+  PARAM$finalmodel$optim$pos_bagging_fraction <- 0.421339686790313
+  
+  PARAM$finalmodel$optim$neg_bagging_fraction <- 0.999589805850023
+  
+  envios <- 12636
   
   
   # Hiperparametros FIJOS de  lightgbm
@@ -109,16 +124,14 @@ for (sem in semillas) {
     feature_pre_filter = FALSE,
     force_row_wise = TRUE, # para reducir warnings
     verbosity = -100,
-    max_depth = -1L, # -1 significa no limitar,  por ahora lo dejo fijo
+
     min_gain_to_split = 0.0, # min_gain_to_split >= 0.0
     min_sum_hessian_in_leaf = 0.001, #  min_sum_hessian_in_leaf >= 0.0
     lambda_l1 = 0.0, # lambda_l1 >= 0.0
     lambda_l2 = 0.0, # lambda_l2 >= 0.0
     max_bin = 31L, # lo debo dejar fijo, no participa de la BO
     
-    bagging_fraction = 1.0, # 0.0 < bagging_fraction <= 1.0
-    pos_bagging_fraction = 1.0, # 0.0 < pos_bagging_fraction <= 1.0
-    neg_bagging_fraction = 1.0, # 0.0 < neg_bagging_fraction <= 1.0
+
     is_unbalance = FALSE, #
     scale_pos_weight = 1.0, # scale_pos_weight > 0.0
     
@@ -180,18 +193,21 @@ for (sem in semillas) {
 
   tb_entrega[, Predicted := 0L]
   tb_entrega[1:envios, Predicted := 1L]
-  tb_entrega <- merge(tb_entrega,truth,sort = F)
-  tb_entrega[,gan := fifelse(Predicted == 1L & clase_ternaria == "BAJA+2",273000,-7000)]
+  
+  tb_ganancias <- tb_entrega[truth, on = c("numero_de_cliente"), nomatch = 0]
+  tb_ganancias[,gan := fifelse(clase_ternaria == "BAJA+2",273000,-7000,0)]
   
   ganancia <- tibble::tribble(~semilla,~ganancia,
-                              sem, sum(tb_entrega$gan))
+                              semillas[i], sum(tb_ganancias$gan))
   
   ganancias <- rbind(ganancias,ganancia)
   
   fwrite(tb_entrega[, list(numero_de_cliente, Predicted)],
-         file = paste0(PARAM$experimento, "_", sem, ".csv"),
+         file = paste0(PARAM$experimento, "_", semillas[i], ".csv"),
          sep = ","
     )
+  
+  print(paste0("Iteracion ",i, " finalizada"))
   
 }
 

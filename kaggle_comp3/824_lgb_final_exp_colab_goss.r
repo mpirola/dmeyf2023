@@ -15,7 +15,7 @@ require("lightgbm")
 # defino los parametros de la corrida, en una lista, la variable global  PARAM
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM <- list()
-PARAM$experimento <- "KA8240_baseline_exp_colab"
+PARAM$experimento <- "KA8240_exp_colab_goss"
 
 PARAM$input$dataset <- "./datasets/dataset_baseline_exp_colab.csv.gz"
 
@@ -91,35 +91,50 @@ for (i in 1:20) {
   PARAM$finalmodel$semilla <- semillas[i]
   
   # hiperparametros intencionalmente 
-  PARAM$finalmodel$optim$num_iterations <- 228
-  PARAM$finalmodel$optim$learning_rate <- 0.158028635621886
-  PARAM$finalmodel$optim$feature_fraction <- 0.93052222035461
-  PARAM$finalmodel$optim$min_data_in_leaf <- 16964
-  PARAM$finalmodel$optim$num_leaves <- 50
+  PARAM$finalmodel$optim$num_iterations <- 
   
-  envios <- 13235
+  PARAM$finalmodel$optim$learning_rate <- 0.149905294096167
   
+  PARAM$finalmodel$optim$feature_fraction <- 0.696134728203708
+
+  
+  PARAM$finalmodel$optim$min_data_in_leaf <- 16680
+  
+  PARAM$finalmodel$optim$num_leaves <- 406
+  
+  PARAM$finalmodel$optim$feature_fraction_bynode <- 0.0839060623806927
+  
+  
+  PARAM$finalmodel$optim$max_depth <- 22
+    
+  PARAM$finalmodel$optim$top_rate <- 0.162713007404948
+  
+  PARAM$finalmodel$optim$other_rate <- 0.597214885223819
+
+  envios <- 11755
+
   
   # Hiperparametros FIJOS de  lightgbm
   PARAM$finalmodel$lgb_basicos <- list(
     boosting = "gbdt", # puede ir  dart  , ni pruebe random_forest
     objective = "binary",
     metric = "custom",
+    
+    sample_strategy = "goss",
+    
     first_metric_only = TRUE,
     boost_from_average = TRUE,
     feature_pre_filter = FALSE,
     force_row_wise = TRUE, # para reducir warnings
     verbosity = -100,
-    max_depth = -1L, # -1 significa no limitar,  por ahora lo dejo fijo
+
     min_gain_to_split = 0.0, # min_gain_to_split >= 0.0
     min_sum_hessian_in_leaf = 0.001, #  min_sum_hessian_in_leaf >= 0.0
     lambda_l1 = 0.0, # lambda_l1 >= 0.0
     lambda_l2 = 0.0, # lambda_l2 >= 0.0
     max_bin = 31L, # lo debo dejar fijo, no participa de la BO
     
-    bagging_fraction = 1.0, # 0.0 < bagging_fraction <= 1.0
-    pos_bagging_fraction = 1.0, # 0.0 < pos_bagging_fraction <= 1.0
-    neg_bagging_fraction = 1.0, # 0.0 < neg_bagging_fraction <= 1.0
+
     is_unbalance = FALSE, #
     scale_pos_weight = 1.0, # scale_pos_weight > 0.0
     
@@ -181,12 +196,12 @@ for (i in 1:20) {
 
   tb_entrega[, Predicted := 0L]
   tb_entrega[1:envios, Predicted := 1L]
-  tb_entrega <- merge(tb_entrega,truth,sort = F)
-  tb_entrega[,gan := fifelse(Predicted == 1L & clase_ternaria == "BAJA+2",273000,
-                             fifelse(Predicted == 1L & clase_ternaria != "BAJA+2",-7000,0))]
+  
+  tb_ganancias <- tb_entrega[truth, on = c("numero_de_cliente"), nomatch = 0]
+  tb_ganancias[,gan := fifelse(clase_ternaria == "BAJA+2",273000,-7000,0)]
   
   ganancia <- tibble::tribble(~semilla,~ganancia,
-                              semillas[i], sum(tb_entrega$gan))
+                              semillas[i], sum(tb_ganancias$gan))
   
   ganancias <- rbind(ganancias,ganancia)
   
