@@ -195,7 +195,8 @@ for (i in 1:20) {
   tb_entrega[1:envios, Predicted := 1L]
   
   tb_ganancias <- tb_entrega[truth, on = c("numero_de_cliente"), nomatch = 0]
-  tb_ganancias[,gan := fifelse(clase_ternaria == "BAJA+2",273000,-7000,0)]
+  tb_ganancias <- tb_ganancias[Predicted == 1,]
+  tb_ganancias[,gan := fifelse(clase_ternaria == "BAJA+2",273000,-7000)]
   
   ganancia <- tibble::tribble(~semilla,~ganancia,
                               semillas[i], sum(tb_ganancias$gan))
