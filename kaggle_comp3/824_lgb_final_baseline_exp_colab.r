@@ -85,9 +85,9 @@ dtrain <- lgb.Dataset(
 # genero el modelo
 
 
-for (sem in semillas) {
+for (i in 1:20) {
   
-  PARAM$finalmodel$semilla <- sem
+  PARAM$finalmodel$semilla <- semillas[i]
   
   # hiperparametros intencionalmente 
   PARAM$finalmodel$optim$num_iterations <- 282
@@ -190,7 +190,7 @@ for (sem in semillas) {
   ganancias <- rbind(ganancias,ganancia)
   
   fwrite(tb_entrega[, list(numero_de_cliente, Predicted)],
-         file = paste0(PARAM$experimento, "_", sem, ".csv"),
+         file = paste0(PARAM$experimento, "_", semillas[i], ".csv"),
          sep = ","
     )
   
