@@ -84,7 +84,7 @@ dtrain <- lgb.Dataset(
 
 # genero el modelo
 
-ganancias <- tibble::tribble(~semilla,~ganancia)
+ganancias <- tibble::tribble(~semilla,~ganancia,~envios)
 
 for (i in 1:20) {
   
@@ -111,7 +111,7 @@ for (i in 1:20) {
   
   PARAM$finalmodel$optim$other_rate <- 0.597214885223819
 
-  envios <- 11755
+  envios_opt <- 11755
 
   
   # Hiperparametros FIJOS de  lightgbm
@@ -194,22 +194,28 @@ for (i in 1:20) {
   
   # genero archivos con los  "envios" mejores
 
-  tb_entrega[, Predicted := 0L]
-  tb_entrega[1:envios, Predicted := 1L]
+  cortes <- c(envios_opt,seq(8000, 15000, by = 500))
   
-  tb_ganancias <- tb_entrega[truth, on = c("numero_de_cliente"), nomatch = 0]
-  tb_ganancias <- tb_ganancias[Predicted == 1,]
-  tb_ganancias[,gan := fifelse(clase_ternaria == "BAJA+2",273000,-7000)]
-  
-  ganancia <- tibble::tribble(~semilla,~ganancia,
-                              semillas[i], sum(tb_ganancias$gan))
-  
-  ganancias <- rbind(ganancias,ganancia)
-  
-  fwrite(tb_entrega[, list(numero_de_cliente, Predicted)],
-         file = paste0(PARAM$experimento, "_", i, ".csv"),
-         sep = ","
+  for (envios in cortes) {
+    
+    tb_entrega[, Predicted := 0L]
+    tb_entrega[1:envios, Predicted := 1L]
+    
+    fwrite(tb_entrega[, list(numero_de_cliente, Predicted)],
+           file = paste0(PARAM$experimento, "_", i,"_",envios,".csv"),
+           sep = ","
     )
+    
+    tb_ganancias <- tb_entrega[truth, on = c("numero_de_cliente"), nomatch = 0]
+    tb_ganancias <- tb_ganancias[Predicted == 1,]
+    tb_ganancias[,gan := fifelse(clase_ternaria == "BAJA+2",273000,-7000)]
+    
+    ganancia <- tibble::tribble(~semilla,~ganancia,~envios,
+                                semillas[i], sum(tb_ganancias$gan),envios)
+    
+    ganancias <- rbind(ganancias,ganancia)
+    
+  }
   
   print(paste0("Iteracion ",i, " finalizada"))
   
