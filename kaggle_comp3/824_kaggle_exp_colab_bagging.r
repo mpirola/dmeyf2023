@@ -21,12 +21,11 @@ PARAM$input$dataset <- "./datasets/dataset_baseline_exp_colab.csv.gz"
 
 # meses donde se entrena el modelo.
 # roll forward un mes
-PARAM$input$training <- c(202103,202104,202105,202106,202107,202108)
+PARAM$input$training <- c(202102,202103,202104,202105,202106,202107)
 PARAM$input$future <- c(202109) # meses donde se aplica el modelo
 
 
-semillas <- c(528881, 583613, 661417, 894407, 915251,
-              173827, 173839, 173867, 547093, 547103)
+semillas <- c(528881, 583613, 661417, 894407, 915251)
 
 #------------------------------------------------------------------------------
 
@@ -76,9 +75,8 @@ dtrain <- lgb.Dataset(
 
 # genero el modelo
 
-ganancias <- tibble::tribble(~semilla,~ganancia,~envios)
 
-for (i in 1:10) {
+for (i in 1:5) {
   
   PARAM$finalmodel$semilla <- semillas[i]
   
