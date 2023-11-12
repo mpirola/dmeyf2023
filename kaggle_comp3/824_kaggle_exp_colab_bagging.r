@@ -78,7 +78,7 @@ dtrain <- lgb.Dataset(
 
 ganancias <- tibble::tribble(~semilla,~ganancia,~envios)
 
-for (i in 1:20) {
+for (i in 1:10) {
   
   PARAM$finalmodel$semilla <- semillas[i]
   
