@@ -186,7 +186,6 @@ for (i in 1:5) {
   print(paste0("Iteracion ",i, " finalizada"))
 }
 
-)
   
 cat("\n\nLa generacion de los archivos para Kaggle ha terminado\n")
   
