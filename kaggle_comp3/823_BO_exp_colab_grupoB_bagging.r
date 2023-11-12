@@ -70,7 +70,7 @@ PARAM$finalmodel$lgb_basicos <- list(
   lambda_l1 = 0.0, # lambda_l1 >= 0.0
   lambda_l2 = 0.0, # lambda_l2 >= 0.0
   max_bin = 31L, # lo debo dejar fijo, no participa de la BO
-  num_iterations = 9999
+  num_iterations = 9999,
   
   is_unbalance = FALSE, #
   scale_pos_weight = 1.0, # scale_pos_weight > 0.0
