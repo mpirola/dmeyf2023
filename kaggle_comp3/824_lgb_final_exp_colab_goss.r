@@ -15,7 +15,7 @@ require("lightgbm")
 # defino los parametros de la corrida, en una lista, la variable global  PARAM
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM <- list()
-PARAM$experimento <- "KA8240_exp_colab_goss"
+PARAM$experimento <- "KA8240_exp_colab_goss_B"
 
 PARAM$input$dataset <- "./datasets/dataset_baseline_exp_colab.csv.gz"
 
@@ -91,27 +91,27 @@ for (i in 1:20) {
   PARAM$finalmodel$semilla <- semillas[i]
   
   # hiperparametros intencionalmente 
-  PARAM$finalmodel$optim$num_iterations <- 100
+  PARAM$finalmodel$optim$num_iterations <- 3729
   
-  PARAM$finalmodel$optim$learning_rate <- 0.149905294096167
+  PARAM$finalmodel$optim$learning_rate <- 0.0449232710286836
   
-  PARAM$finalmodel$optim$feature_fraction <- 0.696134728203708
+  PARAM$finalmodel$optim$feature_fraction <- 0.60546390500175
 
+  PARAM$finalmodel$optim$min_data_in_leaf <- 47019
   
-  PARAM$finalmodel$optim$min_data_in_leaf <- 16680
+  PARAM$finalmodel$optim$num_leaves <- 613
   
-  PARAM$finalmodel$optim$num_leaves <- 406
+  PARAM$finalmodel$optim$feature_fraction_bynode <- 0.774489426378832
   
-  PARAM$finalmodel$optim$feature_fraction_bynode <- 0.0839060623806927
-  
-  
+
   PARAM$finalmodel$optim$max_depth <- 22
     
-  PARAM$finalmodel$optim$top_rate <- 0.162713007404948
+  PARAM$finalmodel$optim$top_rate <- 0.123024449730761
   
-  PARAM$finalmodel$optim$other_rate <- 0.597214885223819
+  PARAM$finalmodel$optim$other_rate <- 0.203246427263164
 
-  envios_opt <- 11755
+
+  envios_opt <- 11358
 
   
   # Hiperparametros FIJOS de  lightgbm
