@@ -32,7 +32,7 @@ options(error = function() {
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM <- list()
 
-PARAM$experimento <- "HT8230B_exp_colab_bagging"
+PARAM$experimento <- "HT8230B_exp_colab_goss"
 
 PARAM$input$dataset <- "./datasets/dataset_baseline_exp_colab.csv.gz"
 
@@ -102,7 +102,8 @@ PARAM$bo_lgb <- makeParamSet(
   makeIntegerParam("max_depth", lower = 2L, upper = 50L),
   
   makeNumericParam("top_rate", lower = 0.0, upper = 1.0),
-  makeNumericParam("other_rate", lower = 0.0, upper = 1.0)
+  makeNumericParam("other_rate", lower = 0.0, upper = 1.0),
+  forbidden = quote(top_rate + other_rate > 1)
 )
 
 # si usted es ambicioso, y tiene paciencia, podria subir este valor a 100
