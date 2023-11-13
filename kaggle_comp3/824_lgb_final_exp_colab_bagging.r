@@ -15,7 +15,7 @@ require("lightgbm")
 # defino los parametros de la corrida, en una lista, la variable global  PARAM
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM <- list()
-PARAM$experimento <- "KA8240_exp_colab_bagging"
+PARAM$experimento <- "KA8240_exp_colab_bagging_B"
 
 PARAM$input$dataset <- "./datasets/dataset_baseline_exp_colab.csv.gz"
 
@@ -40,9 +40,6 @@ setwd("~/buckets/b1")
 dataset <- fread(PARAM$input$dataset, stringsAsFactors = TRUE)
 
 truth <- dataset[foto_mes == PARAM$input$future,c("numero_de_cliente","clase_ternaria")]
-
-
-
 
 
 #--------------------------------------
@@ -91,27 +88,29 @@ for (i in 1:20) {
   PARAM$finalmodel$semilla <- semillas[i]
   
   # hiperparametros intencionalmente 
-  PARAM$finalmodel$optim$num_iterations <- 100
+  PARAM$finalmodel$optim$num_iterations <- 714
   
-  PARAM$finalmodel$optim$learning_rate <- 0.281098885768042
+  PARAM$finalmodel$optim$learning_rate <- 0.0537381844560982
   
-  PARAM$finalmodel$optim$feature_fraction <- 0.496338772217946
+  PARAM$finalmodel$optim$feature_fraction <- 0.297652346092468
   
-  PARAM$finalmodel$optim$feature_fraction_bynode <- 0.496338772217946
+  PARAM$finalmodel$optim$feature_fraction_bynode <- 0.569927498248113
   
-  PARAM$finalmodel$optim$min_data_in_leaf <- 27272
+  PARAM$finalmodel$optim$min_data_in_leaf <- 2558
   
-  PARAM$finalmodel$optim$num_leaves <- 690
+  PARAM$finalmodel$optim$num_leaves <- 232
   
-  PARAM$finalmodel$optim$max_depth <- 45
+  PARAM$finalmodel$optim$max_depth <- 10
     
-  PARAM$finalmodel$optim$bagging_fraction <- 0.387145419443833
+  PARAM$finalmodel$optim$bagging_fraction <- 0.018818565432286
   
-  PARAM$finalmodel$optim$pos_bagging_fraction <- 0.421339686790313
+  PARAM$finalmodel$optim$pos_bagging_fraction <- 0.98225566730848
   
-  PARAM$finalmodel$optim$neg_bagging_fraction <- 0.999589805850023
+  PARAM$finalmodel$optim$neg_bagging_fraction <- 0.647930437995065
   
-  envios_opt <- 12636
+  PARAM$finalmodel$optim$bagging_freq <- 26
+  
+  envios_opt <- 13184
   
   
   # Hiperparametros FIJOS de  lightgbm
