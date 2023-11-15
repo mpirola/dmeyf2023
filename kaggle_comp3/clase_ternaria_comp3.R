@@ -19,7 +19,9 @@ mes_clientes_presencia[,c("lag_1", "lag_2") := .(shift(si, n = 1, type = "lead")
 mes_clientes_presencia[, clase_ternaria := fifelse(lag_2 == 1, "CONTINUA", fifelse(lag_1 == 1, "BAJA+2", "BAJA+1"))]
 
 mes_clientes_presencia <- mes_clientes_presencia[,c("numero_de_cliente","foto_mes","clase_ternaria")]
+
 bd_final <- merge(bd,mes_clientes_presencia, all.x = T)
+bd_final <- bd_final[,clase_ternaria := fifelse(foto_mes %in% c(202108,202109),NA_character_,clase_ternaria)]
 
 fwrite(bd_final,
        file = "buckets/b1/datasets/competencia_03.csv.gz",
