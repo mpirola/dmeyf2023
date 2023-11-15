@@ -32,6 +32,7 @@ options(error = function() {
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM <- list()
 
+
 PARAM$experimento <- "HT8230_comp3_FE1_bagging_v1"
 
 PARAM$input$dataset <- "./datasets/competencia_03_FE1.csv.gz"
@@ -58,8 +59,7 @@ PARAM$lgb_semilla <- semillas[2]
 #------------------------------------------------------------------------------
 
 # Hiperparametros FIJOS de  lightgbm
-
-PARAM$finalmodel$lgb_basicos <- list(
+PARAM$lgb_basicos <- list(
   boosting = "gbdt", # puede ir  dart  , ni pruebe random_forest
   objective = "binary",
   metric = "custom",
@@ -74,40 +74,35 @@ PARAM$finalmodel$lgb_basicos <- list(
   lambda_l1 = 0.0, # lambda_l1 >= 0.0
   lambda_l2 = 0.0, # lambda_l2 >= 0.0
   max_bin = 31L, # lo debo dejar fijo, no participa de la BO
-  num_iterations = 9999,
-  
+  num_iterations = 9999, # un numero muy grande, lo limita early_stopping_rounds
+
   is_unbalance = FALSE, #
   scale_pos_weight = 1.0, # scale_pos_weight > 0.0
-  
+
   drop_rate = 0.1, # 0.0 < neg_bagging_fraction <= 1.0
   max_drop = 50, # <=0 means no limit
   skip_drop = 0.5, # 0.0 <= skip_drop <= 1.0
-  
-  extra_trees = TRUE, # Magic Sauce
-  
-  seed = PARAM$finalmodel$semilla
-)
 
+  extra_trees = TRUE, # Magic Sauce
+
+  seed = PARAM$lgb_semilla
+)
 
 
 # Aqui se cargan los hiperparametros que se optimizan
 #  en la Bayesian Optimization
-
 PARAM$bo_lgb <- makeParamSet(
   makeNumericParam("learning_rate", lower = 0.02, upper = 0.3),
   makeNumericParam("feature_fraction", lower = 0.01, upper = 1.0),
   makeIntegerParam("num_leaves", lower = 8L, upper = 1024L),
   makeIntegerParam("min_data_in_leaf", lower = 100L, upper = 50000L),
-  #nuevos hp
   makeNumericParam("feature_fraction_bynode", lower = 0.01, upper = 1.0),
   makeIntegerParam("max_depth", lower = 2L, upper = 50L),
-
   makeNumericParam("bagging_fraction", lower = 0.0, upper = 1.0),
   makeNumericParam("pos_bagging_fraction", lower = 0.6, upper = 1.0),
   makeNumericParam("neg_bagging_fraction", lower = 0.1, upper = 0.9),
   makeIntegerParam("baggin_freq", lower = 1L, upper = 30L)
 )
-
 
 # si usted es ambicioso, y tiene paciencia, podria subir este valor a 100
 PARAM$bo_iteraciones <- 70 # iteraciones de la Optimizacion Bayesiana
