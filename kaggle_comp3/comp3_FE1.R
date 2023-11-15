@@ -1,29 +1,25 @@
 require("data.table")
-require("tidyverse")
+#require("tidyverse")
 
 ### FEATURE ENGINEERING ##########
 
 #Cargo datos
-bd <- fread("buckets/b1/datasets/competencia_03.csv.gz")
+dataset <- fread("buckets/b1/datasets/competencia_03.csv.gz")
 
 
-# Catastrophe
+# Catastrophe (código 'prestado' de Juan Raman)
 
 dataset[foto_mes == 201901, ctransferencias_recibidas := NA]
 dataset[foto_mes == 201901, mtransferencias_recibidas := NA ]
-
 dataset[foto_mes == 201902, ctransferencias_recibidas := NA]
 dataset[foto_mes == 201902, mtransferencias_recibidas := NA]
-
 dataset[foto_mes == 201903, ctransferencias_recibidas := NA]
 dataset[foto_mes == 201903, mtransferencias_recibidas := NA]
-
 dataset[foto_mes == 201904, ctarjeta_visa_debitos_automaticos := NA]
 dataset[foto_mes == 201904, ctransferencias_recibidas := NA]
 dataset[foto_mes == 201904, mtransferencias_recibidas := NA]
 dataset[foto_mes == 201904, mttarjeta_visa_debitos_automaticos := NA]
 dataset[foto_mes == 201904, Visa_mfinanciacion_limite := NA]
-
 dataset[foto_mes == 201905, ccomisiones_otras := NA]
 dataset[foto_mes == 201905, ctarjeta_visa_debitos_automaticos := NA]
 dataset[foto_mes == 201905, ctransferencias_recibidas := NA]
@@ -34,7 +30,6 @@ dataset[foto_mes == 201905, mpasivos_margen := NA]
 dataset[foto_mes == 201905, mrentabilidad_annual := NA]
 dataset[foto_mes == 201905, mrentabilidad := NA]
 dataset[foto_mes == 201905, mtransferencias_recibidas := NA]
-
 dataset[foto_mes == 201910, ccajeros_propios_descuentos := NA]
 dataset[foto_mes == 201910, ccomisiones_otras := NA]
 dataset[foto_mes == 201910, chomebanking_transacciones := NA]
@@ -49,9 +44,7 @@ dataset[foto_mes == 201910, mrentabilidad_annual := NA]
 dataset[foto_mes == 201910, mrentabilidad := NA]
 dataset[foto_mes == 201910, mtarjeta_master_descuentos := NA]
 dataset[foto_mes == 201910, mtarjeta_visa_descuentos := NA]
-
 dataset[foto_mes == 202001, cliente_vip := NA]
-
 dataset[foto_mes == 202006, active_quarter := NA]
 dataset[foto_mes == 202006, catm_trx := NA]
 dataset[foto_mes == 202006, catm_trx_other := NA]
@@ -135,12 +128,23 @@ dataset[, cseguros := rowSums(.SD, na.rm = T), .SDcols = c("cseguro_vida","csegu
 ### Homogeneizo distribuciones entre grupos de train y test para las variables que podrían presentar drifting
 # por estar vinculadas a la inflación
 
-drift_cols <- c("mcuentas_saldo",
+drift_cols <- c("saldo_tarjetas_total",
+                "saldo_tarjetas_pesos",
+                "saldo_tarjetas_dolares",
+                "mcuentas_saldo",
                 "mcuenta_corriente",
                 "mcaja_ahorro",
                 "mtarjetas_total",
-                "mtarjeta_Visa_consumo",
-                "mtarjeta_Master_consumo",
+                "Visa_mconsumototal",
+                "Master_mconsumototal",
+                "Master_msaldototal",
+                "Visa_msaldototal",
+                "Master_mconsumopesos",
+                "Visa_mconsumopesos",
+                "Master_mconsumodolares",
+                "Visa_mconsumodolares",
+                "Visa_mpagospesos",
+                "Master_mpagosdolares",
                 "Visa_mpagominimo",
                 "Master_mpagominimo",
                 "mcomisiones_mantenimiento",
@@ -158,10 +162,16 @@ drift_cols <- c("mcuentas_saldo",
                 "mtransferencias_recibidas",
                 "mtransferencias_emitidas")
 
-drift_cols_names <- paste0("std_",drift_cols)
 
-dataset[, (drift_cols_names):= .SD - mean(.SD)/sd(.SD), .SDcols = drift_cols, by = as.character(foto_mes)]
-dataset[,(drift_cols_names) := NULL]
+for (col in drift_cols) {
+  
+  if (col %in% names(dataset)) {
+    dataset[, paste0("std_",col) := (get(col) - mean(get(col),na.rm = T))/sd(get(col),na.rm = T), by = as.character(foto_mes)]
+    dataset[,(col) := NULL]
+  }
+  
+}
+
 
 ###### Variables historicas ######
 
@@ -184,15 +194,15 @@ dataset[, (lagcols6_names) :=  shift(.SD, 6), .SDcols = lagcols, by=numero_de_cl
 ### Deltas 1, 2 y 6 meses
 
 for (col in lagcols) {
-  dataset[, paste0(col, "_delta1") := get(col) - get(paste0(col, "_lag1"))]
+  dataset[, paste0("delta1_" ,col) := get(col) - get(paste0("lag1_",col))]
 } 
 
 for (col in lagcols) {
-  dataset[, paste0(col, "_delta2") := get(col) - get(paste0(col, "_lag2"))]
+  dataset[, paste0("delta2_" ,col) := get(col) - get(paste0("lag2_",col))]
 } 
 
 for (col in lagcols) {
-  dataset[, paste0(col, "_delta6") := get(col) - get(paste0(col, "_lag6"))]
+  dataset[, paste0("delta6_" ,col) := get(col) - get(paste0("lag6_",col))]
 } 
 
 ### Media móvil 3 meses
