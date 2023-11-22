@@ -192,7 +192,7 @@ for (i in 1:20) {
   
   # genero archivos con los  "envios" mejores
   
-  cortes <- c(seq(9000, 12000, by = 500))
+  cortes <- c(seq(9500, 12000, by = 250))
   
   for (envios in cortes) {
     
