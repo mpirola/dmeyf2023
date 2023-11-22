@@ -15,9 +15,9 @@ require("lightgbm")
 # defino los parametros de la corrida, en una lista, la variable global  PARAM
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM <- list()
-PARAM$experimento <- "KA8240_exp_colab_goss_B"
+PARAM$experimento <- "KA8240_FE1_goss_v1_test"
 
-PARAM$input$dataset <- "./datasets/dataset_baseline_exp_colab.csv.gz"
+PARAM$input$dataset <- "./datasets/competencia_03_FE1.csv.gz"
 
 # meses donde se entrena el modelo.
 # roll forward un mes
