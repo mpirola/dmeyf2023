@@ -21,9 +21,9 @@ PARAM$input$dataset <- "./datasets/competencia_03_FE1.csv.gz"
 
 # meses donde se entrena el modelo.
 # roll forward un mes
-PARAM$input$training <- c(201904,201905,201906,
+PARAM$input$training <- c(201904,201905,201906,201907,
                           202002,202003,202004,
-                          202102,202103,202104,202105,202106,202107,202108)
+                          202102,202103,202104,202105,202106,202107)
 
 PARAM$input$future <- c(202109) # meses donde se aplica el modelo
 
