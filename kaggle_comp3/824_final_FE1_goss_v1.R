@@ -183,15 +183,15 @@ for (i in 1:20) {
   tb_entrega <- dapply[, list(numero_de_cliente, foto_mes)]
   tb_entrega[, prob := prediccion]
   
-  tb_probs <- tb_entrega[, (paste0("prob_",i)) := prediccion]
+  #tb_probs <- tb_entrega[, (paste0("prob_",i)) := prediccion]
   
-  probabilidades <- probabilidades[tb_probs, on = c("numero_de_cliente","foto_mes"), nomatch = 0]
+  #probabilidades <- probabilidades[tb_probs, on = c("numero_de_cliente","foto_mes"), nomatch = 0]
   
-  # grabo las probabilidad del modelo
-  # fwrite(tb_entrega,
-  #        file = paste0("prediccion_",i,".txt"),
-  #        sep = "\t"
-  # )
+  #grabo las probabilidad del modelo
+  fwrite(tb_entrega,
+         file = paste0("prediccion_",i,".csv"),
+         sep = ","
+  )
   
   # ordeno por probabilidad descendente
   # setorder(tb_entrega, -prob)
