@@ -2,7 +2,7 @@
 #Levanto archivos de predicciones
 
 
-experimento <- "KA8240_FE1_goss_v1_kaggle"
+experimento <- "KA8240_FE1_goss_v2_kaggle"
 
 dir <- paste0("~/buckets/b1/exp/",experimento)
 
@@ -28,6 +28,7 @@ for (i in 1:length(archivos)) {
 
 library(tidyverse)
 
+
 predicciones <- predicciones %>% 
   pivot_longer(cols = -c(numero_de_cliente,foto_mes)) %>% 
   group_by(numero_de_cliente,foto_mes) %>% 
@@ -35,13 +36,15 @@ predicciones <- predicciones %>%
   ungroup() %>% 
   distinct(numero_de_cliente,.keep_all = T)
 
+require(data.table)
+
 predicciones <- predicciones %>% 
   arrange(desc(prob_media)) %>% 
   as.data.table()
 
 cortes <- c(seq(9000, 12000, by = 250))
 
-require(data.table)
+
 
 for (envios in cortes) {
 
