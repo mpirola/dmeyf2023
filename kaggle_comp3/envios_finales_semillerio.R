@@ -2,7 +2,7 @@
 #Levanto archivos de predicciones
 
 
-experimento <- "KA8240_FE1_goss_v2_kaggle"
+experimento <- "KA8240_FE1_goss_v4_hp2_kaggle"
 
 dir <- paste0("~/buckets/b1/exp/",experimento)
 
